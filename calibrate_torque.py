@@ -43,7 +43,7 @@ def calibrate_encoder_to_ankle_conversion(exo: exoboot.Exo, only_write_if_new):
             print('Motor Angle:', exo.data.motor_angle)
         except KeyboardInterrupt:
             print('Ctrl-C detected, Exiting Gracefully')
-            exo.close(exo.dev_id)
+            exo.close(exo.dev_id) # Exo Closing Issue with dev_id
             break
     print('Done! File saved.')
 

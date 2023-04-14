@@ -227,7 +227,7 @@ class Exo():
             if do_include_sync:
                 self.sync = True
 
-    def close(self, dev_id):
+    def close(self):
         self.update_gains()
         self.command_current(desired_mA=0)
         time.sleep(0.1)
@@ -237,7 +237,7 @@ class Exo():
             fxs.stop_streaming(self.dev_id)
         time.sleep(0.2)
         if self.IS_HARDWARE_CONNECTED:
-            fxs.close(dev_id)
+            fxs.close(self.dev_id)
         self.close_file()
         if self.do_read_fsrs:
             self.heel_fsr_detector.close()
