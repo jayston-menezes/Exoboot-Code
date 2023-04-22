@@ -105,6 +105,7 @@ class Exo():
         self.file_ID = file_ID
         self.do_read_fsrs = do_read_fsrs
         self.do_include_sync = True if sync_detector else False
+        self.only_first_sync_detected = True
         self.sync_detector = sync_detector
         if self.dev_id is None:
             print('Exo obj created but no exoboot connected. Some methods available')
@@ -203,7 +204,7 @@ class Exo():
         heel_fsr: bool = field(init=False)
         toe_fsr: bool = field(init=False)
         did_slip: bool = field(init=False)
-        sync: bool = field(init=False)
+        sync: bool = 1 #field(init=False)
         # gen_var1: float = field(init=False)
         gen_var1: float = 0
         gen_var2: float = field(init=False)
@@ -363,7 +364,10 @@ class Exo():
             self.data.heel_fsr = self.heel_fsr_detector.value
             self.data.toe_fsr = self.toe_fsr_detector.value
         if self.do_include_sync:
-            self.data.sync = self.sync_detector.value
+            if self.sync_detector.value==0 and self.only_first_sync_detected:
+                self.data.sync = self.sync_detector.value
+                print('Sync Detected!')
+                self.only_first_sync_detected = False
 
     def get_batt_voltage(self):
         actpack_data = fxs.read_device(self.dev_id)
@@ -373,8 +377,8 @@ class Exo():
         '''file_ID is used as a custom file identifier after date.'''
         if file_ID is not None:
             try:
-                dir_name = os.getcwd()
-                path = dir_name + '\exo_data'
+                # dir_name = os.getcwd()
+                path = 'exo_data'
                 os.mkdir(path)
             except:
                 pass

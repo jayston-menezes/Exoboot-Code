@@ -18,6 +18,7 @@ import ml_util
 import traceback
 import pandas as pd
 import offline_testing_file
+import os
 
 config, offline_test_time_duration, past_data_file_names = config_util.load_config_from_args()   # loads config from passed args
 
@@ -89,11 +90,12 @@ keyboard_thread = parameter_passers.ParameterPasser(
 config_saver.write_data(loop_time=0)  # Write first row on config
 only_write_if_new = not config.READ_ONLY and config.ONLY_LOG_IF_NEW
 iteration_count = 0
+exit_code = False
 
 while True:
     try:
+        timer.pause()
         if IS_HARDWARE_CONNECTED:
-            timer.pause()
             loop_time = time.perf_counter() - t0
         else:
             loop_time = offline_data_left['loop_time'][iteration_count]
@@ -107,7 +109,7 @@ while True:
                 gait_state_estimator.update_params_from_config(config=config)
             new_params_event.clear()
         if quit_event.is_set():  # If user enters "quit"
-            break
+            exit_code = True
         lock.release()
 
         for exo in exo_list:
@@ -133,6 +135,8 @@ while True:
             except:
                 if iteration_count == len(offline_data_left) or iteration_count == len(offline_data_right):
                     break
+        if exit_code:
+            break
 
     except KeyboardInterrupt:
         print('Ctrl-C detected, Exiting Gracefully')

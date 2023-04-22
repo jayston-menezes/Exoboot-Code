@@ -36,6 +36,12 @@ class ParameterPasser(threading.Thread):
                 #       'slip detect active: ', self.config.SWING_ONLY)
                 self.new_params_event.set()
                 self.lock.release()
+            
+            elif msg == 's':
+                print('Changing Speed')
+                self.lock.acquire()
+                self.new_params_event.set()
+                self.lock.release()
 
             elif len(msg) < 3:
                 print('Message must be either "quit" or a string of parameters'
@@ -43,9 +49,12 @@ class ParameterPasser(threading.Thread):
                       ' s for setpoint) and ending with an exclamation point)')
 
             elif msg.lower() == 'quit':
-                print('Quitting')
+                
                 self.lock.acquire()
                 self.quit_event.set()
+                self.config.SLIP_DETECT_ACTIVE = not self.config.SLIP_DETECT_ACTIVE
+                if not self.config.SWING_ONLY: self.config.SWING_ONLY = not self.config.SWING_ONLY
+                self.new_params_event.set()
                 self.lock.release()
                 break
 
