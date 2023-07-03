@@ -204,7 +204,7 @@ class Exo():
         heel_fsr: bool = field(init=False)
         toe_fsr: bool = field(init=False)
         did_slip: bool = field(init=False)
-        sync: bool = 1 #field(init=False)
+        sync: bool = field(init=False)
         # gen_var1: float = field(init=False)
         gen_var1: float = 0
         gen_var2: float = field(init=False)
